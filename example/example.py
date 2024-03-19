@@ -17,31 +17,30 @@
 
 import rectangle_packing_solver as rps
 
-
 def main():
     # Define a problem
     problem = rps.Problem(
         rectangles=[
-            [4, 6],  # Format: [width, height] as list. Default rotatable: False
-            (4, 4),  # Format: (width, height) as tuple. Default rotatable: False
-            {"width": 2.1, "height": 3.2, "rotatable": False},  # Or can be defined as dict.
-            {"width": 1, "height": 5, "rotatable": True},
+            {"width": 2.53, "height": 2.53, "rotatable": True},
+            {"width": 3.1, "height": 3, "rotatable": True},
+            {"width": 5, "height": 5, "rotatable": True},
+            {"width": 5, "height": 5, "rotatable": True},
+            {"width": 4, "height": 4, "rotatable": True},
+            {"width": 2.6, "height": 6, "rotatable": True},
+            {"width": 14.75, "height": 3.65, "rotatable": True},
         ]
     )
     print("problem:", problem)
 
     # Find a solution
     print("\n=== Solving without width/height constraints ===")
-    solution = rps.Solver().solve(problem=problem)
+    solution = rps.Solver().solve(problem=problem,simanneal_steps=20600,max_temp=1460,min_temp=0.84,show_progress=True)
     print("solution:", solution)
-
-    # Visualization (to floorplan.png)
     rps.Visualizer().visualize(solution=solution, path="./figs/floorplan_example.png")
 
-    # [Other Usages]
     # We can also give a solution width (and/or height) limit
     print("\n=== Solving with width/height constraints ===")
-    solution = rps.Solver().solve(problem=problem, height_limit=6.5, show_progress=True, seed=1111)
+    solution = rps.Solver().solve(problem=problem,simanneal_steps=15400,max_temp=1020,min_temp=0.6,width_limit=12,show_progress=True)
     print("solution:", solution)
     rps.Visualizer().visualize(solution=solution, path="./figs/floorplan_example_limit.png")
 

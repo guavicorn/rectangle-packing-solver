@@ -27,12 +27,12 @@ from .solution import Solution
 
 def exit_handler(signum, frame) -> None:  # type: ignore
     """
-    Since `simaaneal` traps SIGINT, we override it.
+    Since `simanneal` traps SIGINT, we override it.
     """
     sys.exit(1)
 
 
-class Solver:
+class Solver(object):
     """
     A rectangle packing solver.
     """
@@ -45,8 +45,10 @@ class Solver:
         problem: Problem,
         width_limit: Optional[float] = None,
         height_limit: Optional[float] = None,
-        simanneal_minutes: float = 0.1,
-        simanneal_steps: int = 100,
+        simanneal_minutes: Optional[float] = 0.1,
+        simanneal_steps: Optional[int] = 500,
+        max_temp: Optional[int] = 300,
+        min_temp: Optional[int] = 5,
         show_progress: bool = False,
         seed: Optional[int] = None,
     ) -> Solution:
@@ -65,6 +67,8 @@ class Solver:
                 None,
                 simanneal_minutes,
                 simanneal_steps,
+                max_temp,
+                min_temp,
                 show_progress,
                 strategy="hard",
             )
@@ -101,6 +105,8 @@ class Solver:
                 None,
                 simanneal_minutes,
                 simanneal_steps,
+                max_temp,
+                min_temp,
                 show_progress,
                 strategy="soft",
             )
@@ -112,6 +118,8 @@ class Solver:
                 None,
                 simanneal_minutes,
                 simanneal_steps,
+                max_temp,
+                min_temp,
                 show_progress,
                 strategy="hard",
             )
@@ -123,7 +131,9 @@ class Solver:
         height_limit: Optional[float] = None,
         initial_state: Optional[List[int]] = None,
         simanneal_minutes: float = 0.1,
-        simanneal_steps: int = 100,
+        simanneal_steps: int = 1000,
+        max_temp: int = 300,
+        min_temp: int = 5,
         show_progress: bool = False,
         strategy: str = None,
     ) -> Solution:
@@ -169,7 +179,10 @@ class Solver:
 
         signal.signal(signal.SIGINT, exit_handler)
         rpp.copy_strategy = "slice"  # We use "slice" since the state is a list
-        rpp.set_schedule(rpp.auto(minutes=simanneal_minutes, steps=simanneal_steps))
+        #rpp.set_schedule(rpp.auto(minutes=simanneal_minutes, steps=simanneal_steps))
+        rpp.Tmax = max_temp
+        rpp.Tmin = min_temp
+        rpp.steps = simanneal_steps
         final_state, _ = rpp.anneal()
 
         # Convert simanneal's final_state to a Solution object
